@@ -1,0 +1,182 @@
+{
+  "context_specification": {
+    "project": {
+      "id": "nebula-cloud-platform",
+      "name": "Nebula Cloud Platform",
+      "version": "1.0.0",
+      "description": "Enterprise-grade cloud infrastructure and platform engineering meta-repository",
+      "domain": "Cloud Infrastructure & Platform Engineering",
+      "organization": "Dulux Tech",
+      "methodology": "Infrastructure as Code + GitOps"
+    },
+    "domain_context": {
+      "bounded_context": "Cloud Infrastructure",
+      "core_responsibilities": [
+        "Multi-cloud infrastructure provisioning",
+        "Kubernetes cluster management",
+        "Serverless function orchestration",
+        "Network architecture",
+        "Observability and monitoring"
+      ],
+      "upstream_dependencies": [],
+      "downstream_consumers": [
+        "sentinel-ai-engine",
+        "chronos-data-platform",
+        "titan-microservices-mesh",
+        "aurora-fullstack-saas"
+      ]
+    },
+    "key_components": [
+      {
+        "id": "terraform-modules",
+        "description": "Reusable Terraform infrastructure modules",
+        "responsibilities": [
+          "VNet and networking modules",
+          "AKS cluster modules",
+          "Azure SQL database modules",
+          "Azure Cache for Redis modules",
+          "Azure Blob Storage and CDN modules",
+          "Azure AD security modules",
+          "Key Vault encryption modules"
+        ]
+      },
+      {
+        "id": "aks-clusters",
+        "description": "Kubernetes cluster configurations and Helm charts",
+        "responsibilities": [
+          "AKS cluster provisioning",
+          "Node pool management",
+          "Add-on deployments",
+          "Ingress configurations"
+        ]
+      },
+      {
+        "id": "container-apps",
+        "description": "Azure Container Apps service definitions",
+        "responsibilities": [
+          "Container image definitions",
+          "Revision configurations",
+          "Auto-scaling",
+          "Load balancing"
+        ]
+      },
+      {
+        "id": "azure-functions",
+        "description": "Serverless function repository",
+        "responsibilities": [
+          "Azure Function code",
+          "Durable functions",
+          "Event hub bindings",
+          "Logic Apps workflows"
+        ]
+      },
+      {
+        "id": "networking",
+        "description": "Network architecture and configurations",
+        "responsibilities": [
+          "VNet design",
+          "Virtual WAN",
+          "Private Link endpoints",
+          "DNS configurations"
+        ]
+      },
+      {
+        "id": "observability",
+        "description": "Monitoring and observability infrastructure",
+        "responsibilities": [
+          "Prometheus metrics",
+          "Grafana dashboards",
+          "Alert manager configs",
+          "Log aggregation"
+        ]
+      }
+    ],
+    "technology_stack": {
+      "iac": [
+        "Terraform",
+        "Azure Bicep",
+        "Pulumi"
+      ],
+      "containers": [
+        "Docker",
+        "AKS",
+        "Container Apps",
+        "Azure Container Instances"
+      ],
+      "serverless": [
+        "Azure Functions",
+        "Azure API Management",
+        "Logic Apps"
+      ],
+      "databases": [
+        "Cosmos DB",
+        "Azure SQL",
+        "Azure Cache for Redis"
+      ],
+      "networking": [
+        "VNet",
+        "Virtual WAN",
+        "Private Link"
+      ],
+      "security": [
+        "Key Vault",
+        "Azure AD",
+        "Defender for Cloud",
+        "WAF"
+      ]
+    },
+    "architecture_principles": [
+      "Infrastructure as Code: All resources defined in Terraform/Bicep",
+      "GitOps: All changes via pull requests with review",
+      "Modularity: Reusable modules for common patterns",
+      "Security by Default: Encryption at rest and in transit",
+      "Observability First: Built-in metrics and logging",
+      "Cost Optimization: Right-sizing and tag enforcement"
+    ],
+    "development_phases": {
+      "phase_1": {
+        "name": "Foundation",
+        "duration": "2 weeks",
+        "deliverables": [
+          "Terraform/Bicep module structure",
+          "Base VNet module",
+          "AKS cluster base configuration",
+          "CI/CD pipeline for IaC"
+        ]
+      },
+      "phase_2": {
+        "name": "Core Services",
+        "duration": "3 weeks",
+        "deliverables": [
+          "Database modules (Azure SQL, Redis)",
+          "Serverless patterns (Azure Functions, API Management)",
+          "Networking enhancements",
+          "Security hardening"
+        ]
+      },
+      "phase_3": {
+        "name": "Advanced Features",
+        "duration": "3 weeks",
+        "deliverables": [
+          "Multi-region deployment patterns",
+          "Disaster recovery configurations",
+          "Advanced observability",
+          "Cost optimization tooling"
+        ]
+      }
+    },
+    "quality_requirements": {
+      "test_coverage": 90,
+      "code_review": "required",
+      "security_scan": "mandatory",
+      "documentation": "auto-generated from code"
+    },
+    "success_criteria": {
+      "infrastructure_as_code": true,
+      "gitops_workflow": true,
+      "multi_cloud_support": true,
+      "production_ready": true,
+      "documentation_complete": true
+    }
+  }
+}

@@ -1,0 +1,314 @@
+{
+  "harness": {
+    "project": "nebula-cloud-platform",
+    "version": "1.0.0",
+    "description": "Harness configuration for Nebula Cloud Platform - Infrastructure as Code and Platform Engineering",
+    "created_date": "2026-03-05"
+  },
+  "infrastructure_harness": {
+    "cloud_providers": ["azure", "aws"],
+    "terraform_modules": [
+      "vnet",
+      "aks",
+      "sql",
+      "redis",
+      "storage",
+      "cdn",
+      "ad",
+      "keyvault"
+    ],
+    "deployment_patterns": [
+      "vm-scale-sets",
+      "container-apps",
+      "aks-cluster",
+      "azure-functions"
+    ],
+    "networking": {
+      "vnet_cidr": "10.0.0.0/16",
+      "availability_zones": 3,
+      "private_subnets": true,
+      "nat_gateway": "highly-available",
+      "virtual_wan": true
+    },
+    "kubernetes": {
+      "aks_version": "1.29",
+      "node_pools": ["general", "memory-optimized", "gpu-optimized"],
+      "addons": [
+        "azure-network-policy",
+        "azure-cni",
+        "oms-agent",
+        "azure-keyvault-secrets-provider",
+        "ingress-appgw",
+        "external-dns",
+        "metrics-server"
+      ]
+    }
+  },
+  "ci_cd_harness": {
+    "pipeline_stages": [
+      {
+        "name": "validate",
+        "actions": [
+          "terraform fmt",
+          "terraform validate",
+          "tflint",
+          "checkov scan"
+        ]
+      },
+      {
+        "name": "plan",
+        "actions": [
+          "terraform init",
+          "terraform plan",
+          "cost-estimation"
+        ]
+      },
+      {
+        "name": "test",
+        "actions": [
+          "terratest",
+          "inspec tests"
+        ]
+      },
+      {
+        "name": "security",
+        "actions": [
+          "tfsec",
+          "checkov",
+          "trivy filesystem"
+        ]
+      },
+      {
+        "name": "deploy-staging",
+        "actions": [
+          "terraform apply",
+          "integration tests"
+        ]
+      },
+      {
+        "name": "deploy-production",
+        "actions": [
+          "approval gate",
+          "terraform apply",
+          "smoke tests"
+        ]
+      }
+    ],
+    "quality_gates": {
+      "test_coverage": 90,
+      "security_scan": true,
+      "code_review": "required",
+      "approval_required": true,
+      "cost_threshold": "dynamic"
+    },
+    "deployment_strategies": [
+      {
+        "name": "canary",
+        "description": "Gradual traffic shift for infrastructure changes",
+        "traffic_split": "10-50-100",
+        "automated_rollback": true
+      },
+      {
+        "name": "blue-green",
+        "description": "Parallel infrastructure deployment",
+        "swap_time": "5 minutes",
+        "health_check": true
+      }
+    ]
+  },
+  "testing_harness": {
+    "unit_tests": {
+      "framework": "terratest",
+      "coverage_threshold": 90,
+      "command": "go test -v -cover"
+    },
+    "integration_tests": {
+      "framework": "kitchen-terraform",
+      "environment": "staging"
+    },
+    "security_tests": {
+      "sast": ["checkov", "tfsec", "terrascan"],
+      "sca": ["dependabot"],
+      "secret_scanning": ["git-secrets", "trufflehog"]
+    },
+    "compliance_tests": {
+      "frameworks": ["SOC2", "CIS"],
+      "scanner": "inspec"
+    }
+  },
+  "observability_harness": {
+    "metrics": {
+      "backend": "Prometheus",
+      "exporters": ["azure-monitor", "datadog"],
+      "retention": "15 months",
+      "recording_rules": true
+    },
+    "logging": {
+      "aggregation": "Azure Monitor Logs",
+      "retention": "90 days",
+      "structured": true,
+      "log_workspaces": {
+        "terraform": "/azure/terraform",
+        "kubernetes": "/azure/aks",
+        "functions": "/azure/functions"
+      }
+    },
+    "tracing": {
+      "backend": "Azure Application Insights",
+      "sampling_rate": 0.1,
+      "auto_instrumentation": true
+    },
+    "dashboards": [
+      {
+        "name": "Infrastructure Overview",
+        "metrics": ["cpu", "memory", "network", "costs"]
+      },
+      {
+        "name": "Kubernetes Cluster Health",
+        "metrics": ["pods", "nodes", "deployments"]
+      },
+      {
+        "name": "Cost Analysis",
+        "metrics": ["daily-cost", "forecast", "savings"]
+      }
+    ],
+    "alerts": {
+      "channels": ["email", "slack", "pagerduty"],
+      "rules": [
+        {"metric": "cpu_utilization", "threshold": 80, "action": "warning"},
+        {"metric": "memory_utilization", "threshold": 85, "action": "critical"},
+        {"metric": "estimated_charges", "threshold": "budget", "action": "alert"}
+      ]
+    }
+  },
+  "security_harness": {
+    "authentication": {
+      "console": "Azure AD / Microsoft Entra ID",
+      "cli": "Azure CLI",
+      "api": "Service Principal"
+    },
+    "authorization": {
+      "model": "RBAC",
+      "principle_of_least_privilege": true,
+      "breakglass_role": true
+    },
+    "secrets": {
+      "provider": "Azure Key Vault",
+      "rotation": "automatic",
+      "encryption": "RSA-HSM"
+    },
+    "network": {
+      "vnet_endpoints": true,
+      "nsgs": "restrictive",
+      "firewall": true,
+      "flow_logs": true
+    },
+    "compliance": {
+      "frameworks": ["SOC2", "ISO27001", "HIPAA"],
+      "audit_logging": true,
+      "azure_policy": true,
+      "defender": true
+    }
+  },
+  "cost_optimization_harness": {
+    "finops_practices": [
+      "tagging_enforcement",
+      "budget_alerts",
+      "right_sizing_recommendations",
+      "reserved_instances",
+      "spot_vms"
+    ],
+    "monitoring": {
+      "budget_thresholds": [
+        {"alert": 80, "critical": 100}
+      ],
+      "reports": "daily",
+      "granularity": "daily"
+    },
+    "tools": [
+      "azure-cost-management",
+      "azure-budgets",
+      "kubecost"
+    ],
+    "saving_strategies": {
+      "compute": ["spot_vms", "reserved_capacity", "auto_scaling"],
+      "storage": ["lifecycle_policies", "tiering"],
+      "database": ["serverless", "reserved_capacity"]
+    }
+  },
+  "governance_harness": {
+    "adr_process": {
+      "template": "docs/adr/template.md",
+      "review_required": true,
+      "approvers": ["architect", "platform-lead"]
+    },
+    "code_standards": {
+      "linting": {
+        "terraform": "tflint",
+        "docker": "hadolint"
+      },
+      "formatting": {
+        "terraform": "terraform fmt",
+        "bicep": "bicep format",
+        "python": "black"
+      },
+      "type_checking": {
+        "python": "mypy"
+      }
+    },
+    "documentation": {
+      "required_readme": true,
+      "architecture_diagrams": true,
+      "module_docs": "terraform-docs"
+    }
+  },
+  "automation_harness": {
+    "scripts": {
+      "init_environment": "scripts/init-env.sh",
+      "validate_terraform": "scripts/validate-tf.sh",
+      "plan_changes": "scripts/plan.sh",
+      "apply_changes": "scripts/apply.sh",
+      "destroy_resources": "scripts/destroy.sh"
+    },
+    "cron_jobs": [
+      {
+        "name": "cost-report",
+        "schedule": "daily",
+        "script": "scripts/cost-report.sh"
+      },
+      {
+        "name": "security-scan",
+        "schedule": "daily",
+        "script": "scripts/security-scan.sh"
+      },
+      {
+        "name": "drift-detection",
+        "schedule": "hourly",
+        "script": "scripts/drift-detect.sh"
+      }
+    ]
+  },
+  "module_structure": {
+    "root_modules": [
+      "environments/production",
+      "environments/staging",
+      "environments/development"
+    ],
+    "shared_modules": [
+      "modules/vnet",
+      "modules/aks",
+      "modules/sql",
+      "modules/redis",
+      "modules/functions",
+      "modules/storage",
+      "modules/ad",
+      "modules/keyvault"
+    ],
+    "examples": [
+      "examples/basic-vnet",
+      "examples/aks-cluster",
+      "examples/serverless-api",
+      "examples/multi-region"
+    ]
+  }
+}
