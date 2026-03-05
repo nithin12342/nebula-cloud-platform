@@ -1,0 +1,37 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+*.tfplan
+
+# Local .terraform directories
+.terraform/
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Provider
+.provider-cache/
+
+# Secrets
+secrets.tf
+credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Backend
+backend.tf

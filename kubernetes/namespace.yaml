@@ -1,0 +1,16 @@
+# Kubernetes Namespace Configuration
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nebula-system
+  labels:
+    name: nebula-system
+    environment: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: nebula-apps
+  labels:
+    name: nebula-apps
+    environment: production
