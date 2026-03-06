@@ -1,5 +1,7 @@
 # CI/CD Test Results Guide
 
+> Last updated: 2026-03-06
+
 ## How to Run Tests via GitHub Actions
 
 ### Option 1: Automatic Tests (On Push)
