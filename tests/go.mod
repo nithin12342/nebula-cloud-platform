@@ -9,7 +9,6 @@ require (
 
 require (
 	github.com/agext/levenshtein v1.2.3 // indirect
-	github.com/apparentlyMARTIN/go-textwidth v0.0.0-20221011034142-a02558f4be39 // indirect
 	github.com/aws/aws-sdk-go v1.50.38 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
