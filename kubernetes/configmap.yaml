@@ -1,0 +1,42 @@
+# Kubernetes ConfigMaps
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nebula-config
+  namespace: nebula-apps
+data:
+  LOG_LEVEL: "info"
+  API_BASE_URL: "https://api.nebula.example.com"
+  DATABASE_HOST: "$(sql_server_fqdn)"
+  REDIS_HOST: "$(redis_cache_hostname)"
+  STORAGE_ACCOUNT: "$(storage_account_name)"
+---
+# Azure Key Vault Secret Provider Class
+apiVersion: secrets-store.csi.x-k8s.io/v1
+kind: SecretProviderClass
+metadata:
+  name: nebula-azure-kv
+  namespace: nebula-apps
+spec:
+  provider: azure
+  secretObjects:
+  - secretObjectName: db-connection-string
+    data:
+    - key: connectionString
+      objectName: db-connection-string
+    type: Opaque
+  parameters:
+    usePodIdentity: "true"
+    keyvaultName: "nebula-prod-kv"
+    objects: |
+      array:
+        - |
+          objectName: db-connection-string
+          objectType: secret
+        - |
+          objectName: redis-password
+          objectType: secret
+        - |
+          objectName: storage-key
+          objectType: secret
+    tenantId: "${azure_tenant_id}"

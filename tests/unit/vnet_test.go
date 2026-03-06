@@ -1,7 +1,6 @@
 package test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -16,8 +15,8 @@ func TestVNetCreation(t *testing.T) {
 		TerraformDir: "../modules/vnet",
 		Vars: map[string]interface{}{
 			"resource_group_name": "test-rg",
-			"location":           "eastus",
-			"vnet_name":          "test-vnet",
+			"location":            "eastus",
+			"vnet_name":           "test-vnet",
 			"address_space":       []string{"10.0.0.0/16"},
 			"subnets": []map[string]interface{}{
 				{
@@ -44,8 +43,8 @@ func TestVNetMultipleSubnets(t *testing.T) {
 		TerraformDir: "../modules/vnet",
 		Vars: map[string]interface{}{
 			"resource_group_name": "test-rg",
-			"location":           "eastus",
-			"vnet_name":          "multi-subnet-vnet",
+			"location":            "eastus",
+			"vnet_name":           "multi-subnet-vnet",
 			"address_space":       []string{"10.0.0.0/16"},
 			"subnets": []map[string]interface{}{
 				{
@@ -78,8 +77,8 @@ func TestVNetOutputs(t *testing.T) {
 		TerraformDir: "../modules/vnet",
 		Vars: map[string]interface{}{
 			"resource_group_name": "test-rg",
-			"location":           "eastus",
-			"vnet_name":          "output-test-vnet",
+			"location":            "eastus",
+			"vnet_name":           "output-test-vnet",
 			"address_space":       []string{"10.0.0.0/16"},
 			"subnets": []map[string]interface{}{
 				{
@@ -111,8 +110,8 @@ func TestVNetNSG(t *testing.T) {
 		TerraformDir: "../modules/vnet",
 		Vars: map[string]interface{}{
 			"resource_group_name": "test-rg",
-			"location":           "eastus",
-			"vnet_name":          "nsg-test-vnet",
+			"location":            "eastus",
+			"vnet_name":           "nsg-test-vnet",
 			"address_space":       []string{"10.0.0.0/16"},
 			"subnets": []map[string]interface{}{
 				{
@@ -155,10 +154,10 @@ func TestVNetValidation(t *testing.T) {
 		TerraformDir: "../modules/vnet",
 		Vars: map[string]interface{}{
 			"resource_group_name": "test-rg",
-			"location":           "eastus",
-			"vnet_name":          "validation-test",
+			"location":            "eastus",
+			"vnet_name":           "validation-test",
 			"address_space":       []string{"10.0.0.0/16"},
-			"subnets":            []map[string]interface{}{},
+			"subnets":             []map[string]interface{}{},
 		},
 	}
 
@@ -166,5 +165,5 @@ func TestVNetValidation(t *testing.T) {
 	defer terraform.Destroy(t, terraformOptions)
 
 	// Validation should succeed
-	assert.NoError(t, fmt.Errorf("validation failed: %w", err), "Terraform validation should pass")
+	assert.NoError(t, err)
 }

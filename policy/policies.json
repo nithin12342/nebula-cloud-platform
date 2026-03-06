@@ -1,0 +1,230 @@
+{
+  "policies": [
+    {
+      "name": "require-encryption-at-rest",
+      "displayName": "Require encryption at rest for Storage Accounts",
+      "description": "This policy ensures all storage accounts have encryption at rest enabled",
+      "mode": "All",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Storage"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": ["Audit", "Deny", "Disabled"]
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "equals": "Microsoft.Storage/storageAccounts"
+            },
+            {
+              "anyOf": [
+                {
+                  "field": "Microsoft.Storage/storageAccounts/encryption.services.blob.enabled",
+                  "notEquals": "true"
+                },
+                {
+                  "field": "Microsoft.Storage/storageAccounts/encryption.services.file.enabled",
+                  "notEquals": "true"
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      }
+    },
+    {
+      "name": "require-tls-12",
+      "displayName": "Require minimum TLS version 1.2",
+      "description": "This policy ensures all resources require minimum TLS version 1.2",
+      "mode": "All",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Security"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": ["Audit", "Deny", "Disabled"]
+        }
+      },
+      "policyRule": {
+        "if": {
+          "anyOf": [
+            {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Storage/storageAccounts"
+                },
+                {
+                  "field": "Microsoft.Storage/storageAccounts/minimumTlsVersion",
+                  "notEquals": "TLS1_2"
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.KeyVault/vaults"
+                },
+                {
+                  "field": "Microsoft.KeyVault/vaults/minimumTlsVersion",
+                  "notEquals": "TLS1_2"
+                }
+              ]
+            },
+            {
+              "allOf": [
+                {
+                  "field": "type",
+                  "equals": "Microsoft.Sql/servers"
+                },
+                {
+                  "field": "Microsoft.Sql/servers/minimalTlsVersion",
+                  "notEquals": "1.2"
+                }
+              ]
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      }
+    },
+    {
+      "name": "require-private-endpoint",
+      "displayName": "Require private endpoints for sensitive resources",
+      "description": "This policy ensures sensitive resources have private endpoints",
+      "mode": "All",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Network"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Audit",
+          "allowedValues": ["Audit", "Deny", "Disabled"]
+        },
+        "resourceTypes": {
+          "type": "Array",
+          "defaultValue": [
+            "Microsoft.Storage/storageAccounts",
+            "Microsoft.KeyVault/vaults",
+            "Microsoft.Sql/servers",
+            "Microsoft.ContainerService/managedClusters"
+          ]
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "in": "[parameters('resourceTypes')]"
+            },
+            {
+              "count": {
+                "field": "Microsoft.Network/privateEndpoints",
+                "where": {
+                  "field": "Microsoft.Network/privateEndpoints[*].name",
+                  "exists": "false"
+                }
+              },
+              "equals": 0
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      }
+    },
+    {
+      "name": "enforce-nsg-rules",
+      "displayName": "Enforce NSG rules for all subnets",
+      "description": "This policy ensures all subnets have NSG associations",
+      "mode": "All",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Network"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Deny",
+          "allowedValues": ["Audit", "Deny", "Disabled"]
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "equals": "Microsoft.Network/virtualNetworks/subnets"
+            },
+            {
+              "field": "Microsoft.Network/virtualNetworks/subnets/networkSecurityGroupAssociation",
+              "exists": "false"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      }
+    },
+    {
+      "name": "require-logs-export",
+      "displayName": "Require diagnostic logs for all resources",
+      "description": "This policy ensures all resources have diagnostic logs enabled",
+      "mode": "All",
+      "metadata": {
+        "version": "1.0.0",
+        "category": "Monitoring"
+      },
+      "parameters": {
+        "effect": {
+          "type": "String",
+          "defaultValue": "Audit",
+          "allowedValues": ["Audit", "Deny", "Disabled"]
+        }
+      },
+      "policyRule": {
+        "if": {
+          "allOf": [
+            {
+              "field": "type",
+              "in": [
+                "Microsoft.Storage/storageAccounts",
+                "Microsoft.KeyVault/vaults",
+                "Microsoft.Sql/servers",
+                "Microsoft.ContainerService/managedClusters"
+              ]
+            },
+            {
+              "field": "Microsoft.Storage/storageAccounts/storageAccountName",
+              "exists": "true"
+            }
+          ]
+        },
+        "then": {
+          "effect": "[parameters('effect')]"
+        }
+      }
+    }
+  ]
+}
